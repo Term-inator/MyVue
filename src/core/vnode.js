@@ -9,11 +9,30 @@ class VNode {
 }
 
 class VDomRenderer {
+  _createChildren(vnode) {
+    const children = []
+    if (vnode.children.length > 0 && typeof vnode.children[0] === 'string') {
+      children.push(document.createTextNode(vnode.children[0]))
+    }
+    else if (Array.isArray(vnode.children)) {
+      vnode.children.forEach(child => {
+        children.push(this.createDomElement(child))
+      })
+    }
+    return children
+  }
+
   createDomElement(vnode) {
     if (vnode instanceof Component) {
       const componentElement = this.createDomElement(vnode.render())
       vnode.mount(componentElement, this)
       return componentElement
+    }
+    else if (typeof vnode === 'function') {
+      const element = document.createElement('div')
+      for (const childElement of this._createChildren(vnode)) {
+        element.appendChild(childElement)
+      }
     }
     else if (typeof vnode.type === 'string') {
       const element = document.createElement(vnode.type)
@@ -34,14 +53,8 @@ class VDomRenderer {
         }
       }
       
-      if (typeof vnode.children === 'string') {
-        // element.textContent = vnode.children
-        element.appendChild(document.createTextNode(vnode.children))
-      }
-      else if (Array.isArray(vnode.children)) {
-        vnode.children.forEach(child => {
-          element.appendChild(this.createDomElement(child))
-        })
+      for (const childElement of this._createChildren(vnode)) {
+        element.appendChild(childElement)
       }
       return element
     }

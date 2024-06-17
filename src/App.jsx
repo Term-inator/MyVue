@@ -1,6 +1,6 @@
 import { Component } from "./core/component"
-import { VNode } from "./core/vnode"
-import Button from "./components/button"
+import { createElement } from "./core/jsx-runtime"
+import Layout from "./layout/Layout"
 
 class App extends Component {
   constructor(props) {
@@ -8,9 +8,7 @@ class App extends Component {
   }
 
   render() {
-    return new VNode('div', { className: 'test' }, [
-      new Button()
-    ])
+    return <Layout></Layout>
   }
 }
 
